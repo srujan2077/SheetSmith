@@ -11,7 +11,7 @@ from src.reporter import generate_report
 
 def main():
     parser = argparse.ArgumentParser(
-        description="DataCleanerPro: A professional Python Excel/CSV Data Cleaning & Reporting Automation Tool."
+        description="SheetSmith: A Python tool for cleaning messy CSV and Excel files, validating records, and generating formatted Excel reports."
     )
     parser.add_argument(
         "-i", "--input", 

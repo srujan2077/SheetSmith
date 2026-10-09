@@ -1,139 +1,164 @@
-# DataCleanerPro
+# SheetSmith
 
-DataCleanerPro is a production-quality Python automation tool designed to streamline the processing, cleaning, and reporting of dirty data in CSV or Excel formats.
+A Python tool for cleaning messy CSV and Excel files, validating records, and generating formatted Excel reports.
 
-It takes raw, unformatted, and error-prone datasets and automatically normalizes, validates, and transforms them into a professional Excel report. This tool is perfect for data engineers, analysts, or anyone who frequently receives messy data from clients and needs a standardized way to clean it.
+SheetSmith helps automate repetitive spreadsheet-cleaning tasks, including standardizing column names, handling duplicate records, validating data, and summarizing results.
 
-## Problem Being Solved
+## What it does
 
-In real-world scenarios, data received from clients or third-party systems is rarely clean. It often contains:
-- Inconsistent column naming
-- Duplicate records
-- Missing values in critical fields
-- Invalid data types (e.g., text in numeric fields)
-- Malformed data (e.g., invalid emails or phone numbers)
+Working with messy spreadsheets often means dealing with inconsistent column names, duplicate rows, missing values, invalid emails, and incorrectly formatted dates or numbers.
 
-Cleaning this manually in Excel is time-consuming and error-prone. DataCleanerPro automates this entire pipeline.
+SheetSmith automates common cleaning and reporting steps so the resulting data is easier to inspect and use.
 
 ## Features
 
-- **Multi-format Ingestion**: Processes single files or entire directories of `.csv` and `.xlsx` files.
-- **Auto-Normalization**: Strips whitespace, standardizes capitalization, and formats column names (e.g., ` Order ID ` -> `order_id`).
-- **Deduplication**: Intelligently removes duplicate records based on configurable keys.
-- **Missing Value Handling**: Fills missing values with sensible defaults (e.g., `0` for numeric, `Unknown` for text).
-- **Data Type Conversion**: Ensures numeric columns are actually numbers and standardizes date formats.
-- **Validation Rules**: Uses Regular Expressions to validate emails and phone numbers, segregating invalid rows.
-- **Transformation**: Performs basic business logic calculations (e.g., `quantity * unit_price = total_amount`).
-- **Comprehensive Reporting**: Generates a multi-sheet Excel workbook containing:
-  - `Cleaned_Data`: The final, analysis-ready dataset.
-  - `Summary`: High-level statistics (Total records, Sales, etc.).
-  - `Validation_Errors`: Rows that failed validation, with reasons.
-  - `Processing_Log`: Detailed step-by-step logs of what the tool did.
+- Read CSV and Excel files.
+- Process supported input files from a directory.
+- Normalize column names and whitespace.
+- Detect and handle duplicate records.
+- Handle missing values according to configured rules.
+- Convert supported numeric and date fields.
+- Validate configured fields such as email addresses and phone numbers.
+- Apply supported data transformations.
+- Export cleaned data to a formatted Excel workbook.
+- Generate summary statistics and validation-error reports.
+- Log processing activity and errors.
+- Run from the command line.
+- Include automated tests.
 
-## Architecture
+## Example
 
-The project is built using a clean, modular, and extensible architecture:
+Input: a sales spreadsheet containing duplicate records, inconsistent column names, missing values, and invalid fields.
 
+Run:
+
+```bash
+python -m src.main -i data/sample/sales_dirty.xlsx -o output/cleaned_sales.xlsx
 ```
-project/
-│
-├── src/                    # Source code
-│   ├── main.py             # CLI Entry point
-│   ├── config.py           # Centralized configuration (rules, defaults)
-│   ├── loader.py           # Robust file ingestion
-│   ├── cleaner.py          # Data normalization and cleaning logic
-│   ├── transformer.py      # Business logic and calculations
-│   ├── validator.py        # Data validation and error segregation
-│   └── reporter.py         # Multi-sheet Excel report generation
-│
+
+The output workbook contains the sheets supported by the application, such as:
+
+- `Cleaned_Data`
+- `Summary`
+- `Validation_Errors`
+- `Processing_Log`
+
+## Project structure
+
+```text
+sheet-smith/
 ├── data/
-│   └── sample/             # Contains 'sales_dirty.xlsx' for demonstration
-│
-├── output/                 # Destination for processed reports
-│
-├── tests/                  # Pytest suite
-│
-├── requirements.txt        # Python dependencies
+│   ├── raw/
+│   └── sample/
+├── src/
+│   ├── main.py
+│   ├── config.py
+│   ├── loader.py
+│   ├── cleaner.py
+│   ├── transformer.py
+│   ├── validator.py
+│   ├── reporter.py
+│   └── logger.py
+├── tests/
+├── generate_sample_data.py
+├── requirements.txt
+├── .gitignore
 └── README.md
 ```
 
-## Technologies Used
+## Requirements
 
-- **Python 3.8+**
-- **pandas**: Core data manipulation.
-- **openpyxl**: Excel file reading/writing.
-- **pytest**: Unit testing.
-- **argparse**: Command-line interface.
-- **logging**: Professional logging mechanism.
+- Python 3.8+ (tested on Python 3.12)
+- pandas>=2.0.0
+- openpyxl>=3.1.0
+- pytest>=7.0.0 for running tests
 
 ## Installation
 
-1. Clone this repository:
-   ```bash
-   git clone https://github.com/yourusername/DataCleanerPro.git
-   cd DataCleanerPro
-   ```
+Clone the repository:
 
-2. (Optional but recommended) Create a virtual environment:
-   ```bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows use `venv\Scripts\activate`
-   ```
+```bash
+git clone https://github.com/srujan2077/sheet-smith.git
+cd sheet-smith
+```
 
-3. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+Create a virtual environment:
+
+```bash
+python -m venv .venv
+```
+
+Activate it on Windows PowerShell:
+
+```powershell
+.venv\Scripts\Activate.ps1
+```
+
+On macOS/Linux:
+
+```bash
+source .venv/bin/activate
+```
+
+Install dependencies:
+
+```bash
+python -m pip install -r requirements.txt
+```
 
 ## Usage
 
-### Command-Line Interface (CLI)
+Generate the sample dataset if required:
 
-DataCleanerPro is executed via the command line.
-
-**Process a single file:**
 ```bash
-python -m src.main --input data/sample/sales_dirty.xlsx --output output/cleaned_sales.xlsx
+python generate_sample_data.py
 ```
 
-**Process a directory of files:**
+Process the sample file:
+
 ```bash
-python -m src.main --input data/raw/ --output output/
+python -m src.main -i data/sample/sales_dirty.xlsx -o output/cleaned_sales.xlsx
 ```
 
-### Configuration
+Process a directory of files:
+```bash
+python -m src.main -i data/raw/ -o output/
+```
 
-You can easily modify the processing rules by editing `src/config.py`.
-- `required_columns`: List of columns that must exist.
-- `duplicate_subset`: Columns used to identify duplicates.
-- `missing_value_defaults`: Dictionary mapping columns to their default fill values.
-- `email_regex` / `phone_regex`: Regex patterns for validation.
-- `numeric_columns` / `date_columns`: Lists defining data types.
+Show available CLI options:
 
-## Example Workflow
+```bash
+python -m src.main --help
+```
 
-1. A client provides a messy spreadsheet: `sales_dirty.xlsx`.
-2. You run: `python -m src.main -i data/sample/sales_dirty.xlsx -o output/report.xlsx`.
-3. The tool logs its progress to the console and to `output/logs/`.
-4. You open `output/report.xlsx` and find:
-   - Clean data ready for Tableau/PowerBI.
-   - A summary sheet showing total sales and records processed.
-   - A validation errors sheet showing the 5 records with invalid emails that need manual review.
+## Configuration
+
+You can configure processing rules in `src/config.py`:
+- `required_columns`: List of columns that must exist in the input data.
+- `duplicate_subset`: Subset of columns used to identify duplicate records.
+- `missing_value_defaults`: Dictionary mapping column names to default values for missing data.
+- `email_regex` and `phone_regex`: Regular expressions used to validate email and phone number fields.
+- `numeric_columns` and `date_columns`: Lists of columns that should be converted to numeric and datetime formats.
 
 ## Testing
 
-To run the automated test suite:
+Run the test suite:
 
 ```bash
 python -m pytest tests/
 ```
 
-## Future Improvements
+The test suite runs against the loader, cleaner, transformer, and validator modules.
 
-- Add support for database connections (SQL ingestion/export).
-- Implement a graphical user interface (GUI) or web dashboard.
-- Add advanced outlier detection using statistical methods.
+## Limitations
 
-## License
+- Validation rules may need to be adapted depending on the specific datasets and regions (e.g. phone numbers).
+- Automated cleaning uses configured defaults for missing data; it cannot determine the correct specific value for every missing or invalid field.
+- Large files may require significant memory since pandas processes data in memory.
 
-MIT License
+## Possible improvements
+
+- Support additional input formats.
+- Add configurable cleaning rules.
+- Expand validation and reporting options.
+- Add more tests for edge cases.

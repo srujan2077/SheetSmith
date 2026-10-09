@@ -7,7 +7,7 @@ def setup_logger(log_file="processing.log"):
     Sets up the application logger.
     Logs to both the console and a file.
     """
-    logger = logging.getLogger("DataCleanerPro")
+    logger = logging.getLogger("SheetSmith")
     
     if logger.hasHandlers():
         logger.handlers.clear()
